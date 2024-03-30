@@ -1,0 +1,40 @@
+import nltk
+
+def process_command(command):
+    """Uses NLTK to process and extract information from the command.
+
+    Args:
+        command (str): The spoken command.
+
+    Returns:
+        dict: A dictionary containing extracted information from the command,
+              or None if the command is invalid.
+    """
+
+    tokens = nltk.word_tokenize(command)
+    pos_tags = nltk.pos_tag(tokens)
+
+    verb = None
+    noun = None
+    preposition = None
+    adverb = None  # Add adverb handling for modifiers (e.g., "quickly open")
+    for token, tag in pos_tags:
+        if tag.startswith("VB"):  # Verb
+            verb = token
+        elif tag.startswith("NN"):  # Noun
+            noun = token
+        elif tag.startswith("IN"):  # Preposition
+            preposition = token
+        elif tag.startswith("RB"):  # Adverb (optional)
+            adverb = token
+
+    if verb and noun:
+        if verb == "open" and preposition == "with":
+            # Handle "open [app] with [argument]" (e.g., "open Photoshop with a new document")
+            return {"action": "open_app_with_arg", "app": noun, "argument": tokens[tokens.index(preposition) + 1]}
+        else:
+            return {"action": "open_app", "app": noun}
+    elif verb == "copy" and noun == "text":
+        return {"action": "copy_text"}
+    else:
+        return None  # Invalid command
