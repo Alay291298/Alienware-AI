@@ -1,0 +1,27 @@
+import nltk
+
+def process_command(command):
+    """Uses NLTK to process and extract information from the command."""
+
+    tokens = nltk.word_tokenize(command)
+    pos_tags = nltk.pos_tag(tokens)  # Part-of-speech tagging for understanding
+
+    # Example logic based on POS tags:
+    verb = None
+    noun = None
+    for token, tag in pos_tags:
+        if tag.startswith("VB"):  # Verb
+            verb = token
+        elif tag.startswith("NN"):  # Noun
+            noun = token
+
+    if verb == "open" and noun:
+        open_applications([noun])
+        speak(f"Opening {noun}")
+    elif verb == "copy" and noun == "text":
+        # Simulate getting text from another source (e.g., speech recognition)
+        text_to_copy = "This is some text to copy"
+        copy_to_clipboard(text_to_copy)
+        speak(f"Copied '{text_to_copy}' to clipboard")
+    else:
+        speak("Invalid command")
