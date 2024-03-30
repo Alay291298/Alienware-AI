@@ -1,0 +1,69 @@
+import speech_recognition as sr
+import pyttsx3
+import clipboard
+
+# Define wake word
+WAKE_WORD = "alien"
+
+def listen_for_command():
+    """Continuously listens for the wake word using the microphone."""
+
+    recognizer = sr.Recognizer()
+    with sr.Microphone() as source:
+        print("Listening...")
+        recognizer.pause_threshold = 1  # Adjust silence duration for wake word detection
+        audio = recognizer.listen(source)
+
+    try:
+        command = recognizer.recognize_google(audio)
+        print(f"You said: {command}")
+        return command.lower()  # Convert to lowercase for case-insensitive matching
+    except sr.UnknownValueError:
+        print("Could not understand audio")
+    except sr.RequestError as e:
+        print(f"Could not request results from Google Speech Recognition service; {e}")
+    return None
+
+def speak(text):
+    """Uses pyttsx3 to convert text to speech and speak it aloud."""
+
+    engine = pyttsx3.init()
+    engine.say(text)
+    engine.runAndWait()
+
+def open_applications(apps):
+    """Simulates opening applications (implementation depends on your OS)."""
+
+    # Replace with the appropriate method for opening applications on your system
+    # (e.g., using libraries like psutil or system calls)
+    print(f"Opening applications: {', '.join(apps)}")
+
+def copy_to_clipboard(text):
+    """Copies text to the clipboard using the clipboard module."""
+
+    clipboard.copy(text)
+    print(f"Copied '{text}' to clipboard")
+
+def main():
+    """Continuously listens for the wake word and executes commands."""
+
+    while True:
+        command = listen_for_command()
+        if command and command.startswith(WAKE_WORD):
+            # Extract the command after the wake word (assuming simple commands)
+            action = command[len(WAKE_WORD):].strip()
+
+            # Example usage for demonstration purposes (replace with actual logic)
+            if action == "open photoshop":
+                open_applications(["photoshop"])
+                speak("Opening Photoshop")
+            elif action == "copy my text":
+                # Simulate getting text from another source (e.g., speech recognition)
+                text_to_copy = "This is some text to copy"
+                copy_to_clipboard(text_to_copy)
+                speak(f"Copied '{text_to_copy}' to clipboard")
+            else:
+                speak("Invalid command")
+
+if __name__ == "__main__":
+    main()
